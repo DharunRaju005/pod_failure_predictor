@@ -99,7 +99,7 @@ The architecture of the Kubernetes Pod Failure Detection system is modular, scal
 #### 4️⃣ XGBoost Model
 - **Purpose:** Multi-class classification of pod statuses.
 - **Training:**
-  - `n_estimators=300`, `learning_rate=0.05`, `max_depth=6`.
+  - `n_estimators=500`, `learning_rate=0.05`, `max_depth=6`.
 - **Deployment:**
   - Saved as `model.pkl`.
 
