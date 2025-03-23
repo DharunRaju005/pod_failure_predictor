@@ -1,0 +1,9 @@
+flask
+prometheus-api-client
+pandas
+numpy
+xgboost
+scikit-learn
+joblib
+kubernetes
+
