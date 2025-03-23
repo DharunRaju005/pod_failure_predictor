@@ -59,7 +59,7 @@ The architecture of the Kubernetes Pod Failure Detection system is modular, scal
 |  +-------------+  |       |  +-------------+  |       |  +-------------+  |
 |  | Pods        |  |<----->|  | Metrics     |  |<----->|  | API Endpoints|  |
 |  | (Node.js)   |  | scrape |  | (CPU, Memory)|  | query |  | /predict     |  |
-|  +-------------+  |       |  +-------------+  |       |  | /test-prometheus|  |
+|  +-------------+  |       |  +-------------+  |       |  | /test-prometheus|
 |                   |       |                   |       |  +-------------+  |
 |  +-------------+  |       |  +-------------+  |       |  +-------------+  |
 |  | Node Exporter|  |<----->|  | Node Metrics|  |       |  | XGBoost Model|  |
@@ -99,9 +99,9 @@ The architecture of the Kubernetes Pod Failure Detection system is modular, scal
 #### 4️⃣ XGBoost Model
 - **Purpose:** Multi-class classification of pod statuses.
 - **Training:**
-  - `n_estimators=500`, `learning_rate=0.05`, `max_depth=6`.
+  - Configurations such as `n_estimators=500`, `learning_rate=0.05`, `max_depth=6` were used.
 - **Deployment:**
-  - Saved as `model.pkl`.
+  - Saved as `model.pkl` in the **model/** directory.
 
 #### 5️⃣ Docker
 - **Purpose:** Containerizes the Flask application.
@@ -113,8 +113,10 @@ The architecture of the Kubernetes Pod Failure Detection system is modular, scal
 
 ## 🚀 Deployment
 
-### Docker
-```bash
+### Docker Deployment
+The Dockerfile outlines the steps for building and running the Flask application inside a container.
+
+```dockerfile
 FROM python:3.9-slim
 WORKDIR /app
 COPY requirements.txt .
@@ -125,7 +127,9 @@ EXPOSE 6000
 CMD ["flask", "run", "--host=0.0.0.0", "--port=6000"]
 ```
 
-### Kubernetes
+### Kubernetes Deployment
+Deploy the monitoring components using the following commands:
+
 ```bash
 kubectl apply -f prometheus-deployment.yaml
 kubectl apply -f prometheus-rbac.yaml
@@ -137,11 +141,15 @@ kubectl apply -f node-exporter.yaml
 ## 🛠️ Usage
 
 ### Predicting Pod Status
+Invoke the prediction API with a POST request:
+
 ```bash
 curl -X POST -H "Content-Type: application/json" -d '{"pod_name": "my-pod", "namespace": "default"}' http://localhost:6000/predict
 ```
 
 ### Testing Prometheus Connectivity
+Test connectivity with Prometheus using:
+
 ```bash
 curl http://localhost:6000/test-prometheus
 ```
@@ -152,18 +160,35 @@ curl http://localhost:6000/test-prometheus
 
 - **Model Accuracy:** 97.95% on the test set.
 - **Top 10 Feature Importances:**
-```plaintext
-Ready Containers: 0.183854
-Pod Event Reason_Killing: 0.175592
-Total Containers: 0.174264
-```
+  ```plaintext
+  Ready Containers: 0.183854
+  Pod Event Reason_Killing: 0.175592
+  Total Containers: 0.174264
+  ```
+
+---
+
+## 🔗 Resources
+
+For ease of access, please refer to the following resource links:
+
+- **Dataset Path:**
+  - [Download Dataset](https://drive.google.com/file/d/1GqR37Zjv5N0zdZg5rtqOBMvvVjRu4RLx/view?usp=drive_link)
+- **Model Path:**
+  - [Colab Model Notebook](https://colab.research.google.com/drive/1xKmMUieumkXtekIEY-bFEXvPp1pYKTPO?usp=drive_link)
+- **Trained Model Artifacts:**
+  - [Trained Models and Artifacts](https://drive.google.com/drive/folders/1Q_kDvzMO0z3cUyC_KR4Kp4W0LTQpRSMn?usp=drive_link)
+- **Project Drive Folder:**
+  - [Project Resources](https://drive.google.com/drive/folders/1MlcvdFQ5930rKxLh6JHxYfWRYwtuW2X-?usp=drive_link)
 
 ---
 
 ## 🚀 Future Improvements
-- Real-Time Event Integration.
-- Model Optimization.
-- Alerting with Alertmanager.
+- **Real-Time Event Integration:** Incorporate live event streams for even more dynamic failure detection.
+- **Model Optimization:** Experiment with hyperparameter tuning and additional feature engineering.
+- **Alerting:** Integrate with Alertmanager for automated notifications upon detecting potential pod failures.
 
 ---
 
+This documentation serves as a comprehensive guide for setting up, deploying, and utilizing the Kubernetes Pod Failure Detection project. It is designed to help both developers and operators understand the system architecture, resource paths, and steps to get the project running in a production environment.
+``` 
